@@ -230,4 +230,56 @@ Unlike binary semaphore:
 
 ### Why `Mutex` Instead of Binary Semaphore
 
+#### Priority Inversion Problem
+Imagine:
+| Task  | Priority |
+| ----- | -------- |
+| TaskH | High     |
+| TaskM | Medium   |
+| TaskL | Low      |
+
+Scenario:
+1. TaskL takes mutex
+2. TaskH tries to take mutex → blocked
+3. TaskM runs continuously
+
+Now:
+- TaskL can't run (preempted by TaskM)
+- TaskH waits for TaskL
+- System stuck
+
+This is **priority inversion**.
+
+#### Priority Inheritance (How Mutex Fixes It)
+With mutex:
+
+When TaskH blocks waiting for mutex:  
+TaskL **temporarily inherits high priority**
+
+It finishes quickly and releases mutex.
+
+Then TaskH runs.
+
+Binary semaphore does NOT support this.
+
+## Binary vs Mutex vs Counting
+| Feature               | Binary | Counting | Mutex |
+| --------------------- | ------ | -------- | ----- |
+| Event signaling       | ✅      | ✅        | ❌     |
+| Count multiple events | ❌      | ✅        | ❌     |
+| Resource protection   | ⚠      | ⚠        | ✅     |
+| Priority inheritance  | ❌      | ❌        | ✅     |
+| ISR safe              | ✅      | ✅        | ❌     |
+
+
+Mutex **CANNOT** be used inside ISR.
+
+## Mutex vs Critical Section
+| Mutex                  | Critical Section     |
+| ---------------------- | -------------------- |
+| Blocks task            | Disables interrupts  |
+| Allows scheduler       | Stops context switch |
+| Good for long sections | Only short sections  |
+
+Never use critical section for long operations.
 
