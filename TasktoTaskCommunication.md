@@ -69,7 +69,7 @@ Used to protect shared resources.
 ## Event Group (Multi-Event Synchronization)
 Wait for multiple conditions at once. Each bit represents one event.
 
-A status board with many indicator LEDs.
+Like a status board with many indicator LEDs.
 
 Example:
 ```c
